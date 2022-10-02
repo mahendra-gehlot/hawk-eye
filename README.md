@@ -1,3 +1,3 @@
 # hawk-eye
 
-ICAIML Project
+ICAIML Project on Super-Resolution using GAN.
