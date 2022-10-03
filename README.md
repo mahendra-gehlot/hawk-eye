@@ -1,7 +1,7 @@
 Super Resolution GANs
 ==============================
 
-The repository contains implementation of state of art super-resolution with GANs, the uses case of this project involve Turbulent Flow and.
+The repository contains implementation of state of art super-resolution with GANs, the uses case of this project involves reconstruction of CFD Turbulence images and multispectral-satellite images with low resolution input images.
 
 Project Organization
 ------------
