@@ -1,7 +1,7 @@
 Super Resolution GANs
 ==============================
 
-Write here description
+The repository contains implementation of state of art super-resolution with GANs, the uses case of this project involve Turbulent Flow and.
 
 Project Organization
 ------------
