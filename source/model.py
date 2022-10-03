@@ -1,5 +1,5 @@
 
 
 def train():
-    pass
+    print('Awsome is comming up')
 
