@@ -1,30 +1,42 @@
-# -*- coding: utf-8 -*-
-import click
-import logging
-from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
+# Create datasets
+import glob
+import random
+import os
+import numpy as np
+
+import torch
+from torch.utils.data import Dataset
+from PIL import Image
+import torchvision.transforms as transforms
+
+# Normalization parameters for pre-trained PyTorch models
+mean = np.array([0.485, 0.456, 0.406])
+std = np.array([0.229, 0.224, 0.225])
 
 
-@click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
-    """
-    logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
+class ImageDataset(Dataset):
+    def __init__(self, root, hr_shape):
+        hr_height, hr_width = hr_shape
+        # Transforms for low resolution images and high resolution images
+        self.lr_transform = transforms.Compose([
+            transforms.Resize((hr_height // 4, hr_height // 4), Image.BICUBIC),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ])
+        self.hr_transform = transforms.Compose([
+            transforms.Resize((hr_height, hr_height), Image.BICUBIC),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ])
 
+        self.files = sorted(glob.glob(root + "/*.*"))
 
-if __name__ == '__main__':
-    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.INFO, format=log_fmt)
+    def __getitem__(self, index):
+        img = Image.open(self.files[index % len(self.files)])
+        img_lr = self.lr_transform(img)
+        img_hr = self.hr_transform(img)
 
-    # not used in this stub but often useful for finding various files
-    project_dir = Path(__file__).resolve().parents[2]
+        return {"lr": img_lr, "hr": img_hr}
 
-    # find .env automagically by walking up directories until it's found, then
-    # load up the .env entries as environment variables
-    load_dotenv(find_dotenv())
-
-    main()
+    def __len__(self):
+        return len(self.files)
