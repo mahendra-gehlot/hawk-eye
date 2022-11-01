@@ -56,7 +56,7 @@ dataloader = DataLoader(
 #  Training
 # ----------
 
-for epoch in range(0, 2):
+for epoch in range(0, 200):
     for i, images in enumerate(dataloader):
 
         # Configure model input
