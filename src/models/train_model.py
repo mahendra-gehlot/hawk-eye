@@ -35,11 +35,6 @@ if cuda:
     criterion_GAN = criterion_GAN.cuda()
     criterion_content = criterion_content.cuda()
 
-# if opt.epoch != 0:
-#     # Load pretrained models
-#     generator.load_state_dict(torch.load("saved_models/generator_%d.pth"))
-#     discriminator.load_state_dict(torch.load("saved_models/discriminator_%d.pth"))
-
 # Optimizers
 optimizer_G = torch.optim.Adam(generator.parameters(),
                                lr=0.0002,
@@ -51,7 +46,7 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(),
 Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
 dataloader = DataLoader(
-    ImageDataset("../../data/Set5/", hr_shape=hr_shape),
+    ImageDataset("data/Set5/", hr_shape=hr_shape),
     batch_size=14,
     shuffle=True,
     num_workers=4,
@@ -61,12 +56,12 @@ dataloader = DataLoader(
 #  Training
 # ----------
 
-for epoch in range(0, 200):
-    for i, imgs in enumerate(dataloader):
+for epoch in range(0, 2):
+    for i, images in enumerate(dataloader):
 
         # Configure model input
-        imgs_lr = Variable(imgs["lr"].type(Tensor))
-        imgs_hr = Variable(imgs["hr"].type(Tensor))
+        imgs_lr = Variable(images["lr"].type(Tensor))
+        imgs_hr = Variable(images["hr"].type(Tensor))
 
         # Adversarial ground truths
         valid = Variable(Tensor(
@@ -131,10 +126,5 @@ for epoch in range(0, 200):
             imgs_lr = make_grid(imgs_lr, nrow=1, normalize=True)
             img_grid = torch.cat((imgs_lr, gen_hr), -1)
             save_image(img_grid,
-                       "images/%d.png" % batches_done,
+                       "reports/GAN_results/images/%d.png" % batches_done,
                        normalize=False)
-
-    # if opt.checkpoint_interval != -1 and epoch % opt.checkpoint_interval == 0:
-    #     # Save model checkpoints
-    #     torch.save(generator.state_dict(), "saved_models/generator_%d.pth" % epoch)
-    #     torch.save(discriminator.state_dict(), "saved_models/discriminator_%d.pth" % epoch)
