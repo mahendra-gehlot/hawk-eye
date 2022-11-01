@@ -10,7 +10,7 @@ from torchvision.utils import save_image, make_grid
 from torch.autograd import Variable
 
 from model import *
-from ..data.make_dataset import ImageDataset
+from src.data.make_dataset import ImageDataset
 
 cuda = torch.cuda.is_available()
 
