@@ -126,5 +126,5 @@ for epoch in range(0, 2):
             imgs_lr = make_grid(imgs_lr, nrow=1, normalize=True)
             img_grid = torch.cat((imgs_lr, gen_hr), -1)
             save_image(img_grid,
-                       "reports/GAN_results/images/%d.png" % batches_done,
+                       "reports/GAN_results/%d.png" % batches_done,
                        normalize=False)
