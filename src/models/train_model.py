@@ -21,6 +21,12 @@ generator = GeneratorResNet()
 discriminator = Discriminator(input_shape=(3, *hr_shape))
 feature_extractor = FeatureExtractor()
 
+resume = True
+
+if resume:
+    generator.load_state_dict(torch.load('models/generator.pt'))
+    discriminator.load_state_dict(torch.load('models/discriminator.pt'))
+
 # Set feature extractor to inference mode
 feature_extractor.eval()
 
@@ -47,15 +53,15 @@ Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
 dataloader = DataLoader(
     ImageDataset("data/training", hr_shape=hr_shape),
-    batch_size=6,
+    batch_size=2,
     shuffle=True,
-    num_workers=4,
+    num_workers=2,
 )
 
 # ----------
 #  Training
 # ----------
-EPOCHs = 400
+EPOCHs = 350
 for epoch in range(0, EPOCHs):
     for i, images in enumerate(dataloader):
 
@@ -120,6 +126,9 @@ for epoch in range(0, EPOCHs):
 
         batches_done = epoch * len(dataloader) + i
         if batches_done % 100 == 0:
+            torch.save(generator.state_dict(), 'models/generator.pt')
+            torch.save(discriminator.state_dict(), 'models/discriminator.pt')
+            print(f'Epoch: {epoch}')
             # Save image grid with upsampled inputs and SRGAN outputs
             imgs_lr = nn.functional.interpolate(imgs_lr, scale_factor=4)
             gen_hr = make_grid(gen_hr, nrow=1, normalize=True)
@@ -128,5 +137,3 @@ for epoch in range(0, EPOCHs):
             save_image(img_grid,
                        "reports/GAN_results/%d.png" % batches_done,
                        normalize=False)
-
-torch.save(generator, 'models/generator.pt')
