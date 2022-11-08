@@ -128,3 +128,5 @@ for epoch in range(0, EPOCHs):
             save_image(img_grid,
                        "reports/GAN_results/%d.png" % batches_done,
                        normalize=False)
+
+torch.save(generator, 'models/generator.pt')
