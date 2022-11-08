@@ -55,8 +55,8 @@ dataloader = DataLoader(
 # ----------
 #  Training
 # ----------
-
-for epoch in range(0, 500):
+EPOCHs = 500
+for epoch in range(0, EPOCHs):
     for i, images in enumerate(dataloader):
 
         # Configure model input
@@ -116,7 +116,7 @@ for epoch in range(0, 500):
 
         sys.stdout.write(
             "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]\n" %
-            (epoch, 200, i, len(dataloader), loss_D.item(), loss_G.item()))
+            (epoch, EPOCHs, i, len(dataloader), loss_D.item(), loss_G.item()))
 
         batches_done = epoch * len(dataloader) + i
         if batches_done % 10 == 0:
