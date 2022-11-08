@@ -119,7 +119,7 @@ for epoch in range(0, EPOCHs):
             (epoch, EPOCHs, i, len(dataloader), loss_D.item(), loss_G.item()))
 
         batches_done = epoch * len(dataloader) + i
-        if batches_done % 10 == 0:
+        if batches_done % 100 == 0:
             # Save image grid with upsampled inputs and SRGAN outputs
             imgs_lr = nn.functional.interpolate(imgs_lr, scale_factor=4)
             gen_hr = make_grid(gen_hr, nrow=1, normalize=True)
