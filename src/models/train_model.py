@@ -46,7 +46,7 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(),
 Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
 dataloader = DataLoader(
-    ImageDataset("data/Set5/", hr_shape=hr_shape),
+    ImageDataset("data/training", hr_shape=hr_shape),
     batch_size=14,
     shuffle=True,
     num_workers=4,
@@ -55,7 +55,7 @@ dataloader = DataLoader(
 # ----------
 #  Training
 # ----------
-EPOCHs = 500
+EPOCHs = 1000
 for epoch in range(0, EPOCHs):
     for i, images in enumerate(dataloader):
 
