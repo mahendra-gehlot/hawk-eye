@@ -1,16 +1,17 @@
 import torch
-import argparse
-import os
 import numpy as np
+import pandas as pd
 import math
 import itertools
 import sys
+from PIL import Image
 from tqdm import tqdm
+from skimage.metrics import peak_signal_noise_ratio
+from skimage.metrics import structural_similarity
 from torch.utils.data import DataLoader
 from torchvision.utils import save_image
 from torch.autograd import Variable
 import torchvision.transforms as transforms
-
 from model import *
 from make_dataset import ImageDataset
 
@@ -28,10 +29,9 @@ load = True
 if load:
     generator.load_state_dict(torch.load('models/generator.pt'))
     discriminator.load_state_dict(torch.load('models/discriminator.pt'))
-    
+
 # Set feature extractor to inference mode
 feature_extractor.eval()
-
 
 if cuda:
     generator = generator.cuda()
@@ -50,22 +50,44 @@ dataloader = DataLoader(
 mean = np.array([0.485, 0.456, 0.406])
 std = np.array([0.229, 0.224, 0.225])
 
-inv_normalize = transforms.Normalize(
-   mean= [-m/s for m, s in zip(mean, std)],
-   std= [1/s for s in std]
-)
+inv_normalize = transforms.Normalize(mean=[-m / s for m, s in zip(mean, std)],
+                                     std=[1 / s for s in std])
 
+image_enlarge = transforms.Resize(hr_shape, Image.BICUBIC)
+
+metrics = []
 
 print('Hawk-Eye is on work......')
 for i, images in enumerate(tqdm(dataloader)):
     # Configure model input
     imgs_lr = Variable(images["lr"].type(Tensor))
     imgs_hr = Variable(images["hr"].type(Tensor))
-    
+
     generator.eval()
     # Generate a high resolution image from low resolution input
     gen_hr = generator(imgs_lr)
-    
-    save_image(inv_normalize(imgs_lr),f"reports/predict/lr_{i}.png")
-    save_image(inv_normalize(imgs_hr),f"reports/predict/hr_{i}.png")
-    save_image(inv_normalize(gen_hr),f"reports/predict/ghr_{i}.png")
+    extrapolated_image = image_enlarge(inv_normalize(imgs_lr))
+    actual_hr_img = inv_normalize(imgs_hr)
+    gen_hr_img = inv_normalize(gen_hr)
+
+    # calculating PSNR and SSIM
+    psnr_srgan = peak_signal_noise_ratio(actual_hr_img, gen_hr_img)
+    ssim_srgan = structural_similarity(actual_hr_img, gen_hr_img)
+    psnr_bi = peak_signal_noise_ratio(actual_hr_img, extrapolated_image)
+    ssim_bi = structural_similarity(actual_hr_img, extrapolated_image)
+
+    # collecting scores
+    scores = [i, psnr_srgan, psnr_bi, ssim_srgan, ssim_bi]
+    metrics.append(scores)
+
+    # saving results
+    save_image(extrapolated_image, f"reports/predict/lr_{i}.png")
+    save_image(actual_hr_img, f"reports/predict/hr_{i}.png")
+    save_image(gen_hr_img, f"reports/predict/ghr_{i}.png")
+
+# writting results
+scores_df = pd.DataFrame(
+    data=metrics,
+    columns=['IMG_ID','PSNR_SRGAN', 'PSNR_BICUBIC', 'SSIM_SRGAN', 'SSIM_BICUBIC'])
+
+scores_df.to_csv('reports/psnr_ssim.csv')

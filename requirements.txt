@@ -1,1 +1,5 @@
-
+torch
+torchvision
+tqdm
+scikit-image
+pandas
