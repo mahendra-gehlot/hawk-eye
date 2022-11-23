@@ -78,21 +78,21 @@ for i, images in enumerate(tqdm(dataloader)):
     # calculating PSNR and SSIM
     psnr_srgan = peak_signal_noise_ratio(actual_hr_img.cpu().detach().numpy(),
                                          gen_hr_img.cpu().detach().numpy())
-    ssim_srgan = structural_similarity(
-        actual_hr_img.cpu().detach().numpy().squeeze(),
-        gen_hr_img.cpu().detach().numpy().squeeze(),
-        channel_axis=3,
-        multichannel=True)
+    # ssim_srgan = structural_similarity(
+    #     actual_hr_img.cpu().detach().numpy().squeeze(),
+    #     gen_hr_img.cpu().detach().numpy().squeeze(),
+    #     channel_axis=3,
+    #     multichannel=True)
 
     psnr_bi = peak_signal_noise_ratio(
         actual_hr_img.cpu().detach().numpy(),
         extrapolated_image.cpu().detach().numpy())
 
-    ssim_bi = structural_similarity(
-        actual_hr_img.cpu().detach().numpy().squeeze(),
-        extrapolated_image.cpu().detach().numpy().squeeze(),
-        channel_axis=3,
-        multichannel=True)
+    # ssim_bi = structural_similarity(
+    #     actual_hr_img.cpu().detach().numpy().squeeze(),
+    #     extrapolated_image.cpu().detach().numpy().squeeze(),
+    #     channel_axis=3,
+    #     multichannel=True)
 
     # collecting scores
     scores = [i, psnr_srgan, psnr_bi, 0, 0]
