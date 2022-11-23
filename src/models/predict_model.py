@@ -70,24 +70,39 @@ for i, images in enumerate(tqdm(dataloader)):
     actual_hr_img = inv_normalize(imgs_hr)
     gen_hr_img = inv_normalize(gen_hr)
 
-    # calculating PSNR and SSIM
-    psnr_srgan = peak_signal_noise_ratio(actual_hr_img, gen_hr_img)
-    ssim_srgan = structural_similarity(actual_hr_img, gen_hr_img)
-    psnr_bi = peak_signal_noise_ratio(actual_hr_img, extrapolated_image)
-    ssim_bi = structural_similarity(actual_hr_img, extrapolated_image)
-
-    # collecting scores
-    scores = [i, psnr_srgan, psnr_bi, ssim_srgan, ssim_bi]
-    metrics.append(scores)
-
     # saving results
     save_image(extrapolated_image, f"reports/predict/lr_{i}.png")
     save_image(actual_hr_img, f"reports/predict/hr_{i}.png")
     save_image(gen_hr_img, f"reports/predict/ghr_{i}.png")
 
+    # calculating PSNR and SSIM
+    psnr_srgan = peak_signal_noise_ratio(actual_hr_img.cpu().detach().numpy(),
+                                         gen_hr_img.cpu().detach().numpy())
+    ssim_srgan = structural_similarity(
+        actual_hr_img.cpu().detach().numpy().squeeze(),
+        gen_hr_img.cpu().detach().numpy().squeeze(),
+        channel_axis=3,
+        multichannel=True)
+
+    psnr_bi = peak_signal_noise_ratio(
+        actual_hr_img.cpu().detach().numpy(),
+        extrapolated_image.cpu().detach().numpy())
+
+    ssim_bi = structural_similarity(
+        actual_hr_img.cpu().detach().numpy().squeeze(),
+        extrapolated_image.cpu().detach().numpy().squeeze(),
+        channel_axis=3,
+        multichannel=True)
+
+    # collecting scores
+    scores = [i, psnr_srgan, psnr_bi, 0, 0]
+    metrics.append(scores)
+
 # writting results
-scores_df = pd.DataFrame(
-    data=metrics,
-    columns=['IMG_ID','PSNR_SRGAN', 'PSNR_BICUBIC', 'SSIM_SRGAN', 'SSIM_BICUBIC'])
+scores_df = pd.DataFrame(data=metrics,
+                         columns=[
+                             'IMG_ID', 'PSNR_SRGAN', 'PSNR_BICUBIC',
+                             'SSIM_SRGAN', 'SSIM_BICUBIC'
+                         ])
 
 scores_df.to_csv('reports/psnr_ssim.csv')
