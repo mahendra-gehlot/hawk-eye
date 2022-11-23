@@ -63,7 +63,6 @@ class GeneratorResNet(nn.Module):
         upsampling = []
         for out_features in range(2):
             upsampling += [
-                # nn.Upsample(scale_factor=2),
                 nn.Conv2d(64, 256, 3, 1, 1),
                 nn.BatchNorm2d(256),
                 nn.PixelShuffle(upscale_factor=2),

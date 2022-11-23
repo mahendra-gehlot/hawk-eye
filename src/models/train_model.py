@@ -61,7 +61,7 @@ dataloader = DataLoader(
 # ----------
 #  Training
 # ----------
-EPOCHs = 350
+EPOCHs = 300
 for epoch in range(0, EPOCHs):
     for i, images in enumerate(dataloader):
 
@@ -137,3 +137,4 @@ for epoch in range(0, EPOCHs):
             save_image(img_grid,
                        "reports/GAN_results/%d.png" % batches_done,
                        normalize=False)
+
