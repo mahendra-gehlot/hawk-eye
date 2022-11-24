@@ -7,7 +7,7 @@ from tqdm import tqdm
 from skimage.metrics import peak_signal_noise_ratio
 from skimage.metrics import structural_similarity
 from torch.utils.data import DataLoader
-from torchvision.utils import save_image
+from torchvision.utils import save_image, make_grid
 from torch.autograd import Variable
 import torchvision.transforms as transforms
 from model import *
@@ -76,9 +76,13 @@ for i, images in enumerate(tqdm(dataloader)):
     gen_hr_img = inv_normalize(gen_hr)
 
     # saving results
-    save_image(extrapolated_image, f"{args.output_directory}lr_{i}.png")
-    save_image(actual_hr_img, f"{args.output_directory}hr_{i}.png")
-    save_image(gen_hr_img, f"{args.output_directory}ghr_{i}.png")
+    extrapolated_image = make_grid(extrapolated_image, nrow=1, normalize=True)
+    gen_hr_img = make_grid(gen_hr_img, nrow=1, normalize=True)
+    actual_hr_img = make_grid(actual_hr_img, nrow=1, normalize=True)
+
+    img_grid = torch.cat((extrapolated_image, gen_hr_img, actual_hr_img), -1)
+
+    save_image(img_grid, f"{args.output_directory}inferred_{i}.png")
 
     # calculating PSNR and SSIM
     psnr_srgan = peak_signal_noise_ratio(actual_hr_img.cpu().detach().numpy(),
