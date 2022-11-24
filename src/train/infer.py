@@ -1,9 +1,7 @@
 import torch
 import numpy as np
 import pandas as pd
-import math
-import itertools
-import sys
+import argparse
 from PIL import Image
 from tqdm import tqdm
 from skimage.metrics import peak_signal_noise_ratio
@@ -13,11 +11,18 @@ from torchvision.utils import save_image
 from torch.autograd import Variable
 import torchvision.transforms as transforms
 from model import *
-from make_dataset import ImageDataset
+from custom_dataset import ImageDataset
+
+# Adding
+parser = argparse.ArgumentParser()
+parser.add_argument("input_directory", help="Directory for inference")
+parser.add_argument("input_resolution", help="Input Resolution", type=int)
+parser.add_argument("output_directory", help="Directory for output")
+args = parser.parse_args()
 
 cuda = torch.cuda.is_available()
 
-hr_shape = (512, 512)
+hr_shape = (args.input_resolution, args.input_resolution)
 
 # Initialize generator and discriminator
 generator = GeneratorResNet()
@@ -41,7 +46,7 @@ if cuda:
 Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
 dataloader = DataLoader(
-    ImageDataset("data/Set5/", hr_shape=hr_shape),
+    ImageDataset(args.input_directory, hr_shape=hr_shape),
     batch_size=1,
     shuffle=False,
     num_workers=2,
@@ -71,9 +76,9 @@ for i, images in enumerate(tqdm(dataloader)):
     gen_hr_img = inv_normalize(gen_hr)
 
     # saving results
-    save_image(extrapolated_image, f"reports/predict/lr_{i}.png")
-    save_image(actual_hr_img, f"reports/predict/hr_{i}.png")
-    save_image(gen_hr_img, f"reports/predict/ghr_{i}.png")
+    save_image(extrapolated_image, f"{args.output_directory}lr_{i}.png")
+    save_image(actual_hr_img, f"{args.output_directory}hr_{i}.png")
+    save_image(gen_hr_img, f"{args.output_directory}ghr_{i}.png")
 
     # calculating PSNR and SSIM
     psnr_srgan = peak_signal_noise_ratio(actual_hr_img.cpu().detach().numpy(),

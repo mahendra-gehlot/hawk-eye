@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision.utils import save_image, make_grid
 from torch.autograd import Variable
 from model import *
-from make_dataset import ImageDataset
+from custom_dataset import ImageDataset
 
 cuda = torch.cuda.is_available()
 
