@@ -128,12 +128,12 @@ for epoch in range(0, EPOCHs):
         if batches_done % 100 == 0:
             torch.save(generator.state_dict(), 'models/generator.pt')
             torch.save(discriminator.state_dict(), 'models/discriminator.pt')
-            print(f'Epoch: {epoch}')
+            print(f'The Model is being Saved!')
             # Save image grid with upsampled inputs and SRGAN outputs
             imgs_lr = nn.functional.interpolate(imgs_lr, scale_factor=4)
             gen_hr = make_grid(gen_hr, nrow=1, normalize=True)
             imgs_lr = make_grid(imgs_lr, nrow=1, normalize=True)
             img_grid = torch.cat((imgs_lr, gen_hr), -1)
             save_image(img_grid,
-                       "reports/GAN_results/%d.png" % batches_done,
+                       "reports/training_results/%d.png" % batches_done,
                        normalize=False)
