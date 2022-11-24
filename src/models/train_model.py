@@ -113,7 +113,7 @@ for epoch in range(0, EPOCHs):
         # --------------
         #  Log Progress
         # --------------
-        print(f'Epoch: {epoch}/{EPOCHs} Batch ID: {i}/{len(dataloader)} Loss_D: {loss_D.item()} Loss_G: {loss_G.item()}')
+        print(f'Epoch: {epoch}/{EPOCHs} Batch ID: {itr_id}/{len(dataloader)} Loss_D: {loss_D.item()} Loss_G: {loss_G.item()}')
 
         if itr_id % (len(dataloader)-1) == 0:
             # Saving Model
