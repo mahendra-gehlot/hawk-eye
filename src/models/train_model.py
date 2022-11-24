@@ -113,9 +113,11 @@ for epoch in range(0, EPOCHs):
         # --------------
         #  Log Progress
         # --------------
-        print(f'Epoch: {epoch}/{EPOCHs} Batch ID: {itr_id}/{len(dataloader)} Loss_D: {loss_D.item():.5f} Loss_G: {loss_G.item():.4f}')
+        print(
+            f'Epoch: {epoch}/{EPOCHs} Batch ID: {itr_id}/{len(dataloader)} Loss_D: {loss_D.item():.7f} Loss_G: {loss_G.item():.7f}'
+        )
 
-        if itr_id + 1 % len(dataloader) == 0:
+        if (itr_id + 1) == len(dataloader):
             # Saving Model
             torch.save(generator.state_dict(), 'models/generator.pt')
             torch.save(discriminator.state_dict(), 'models/discriminator.pt')
