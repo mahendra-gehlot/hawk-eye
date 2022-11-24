@@ -1,14 +1,8 @@
 import torch
-import argparse
-import os
 import numpy as np
-import math
-import itertools
-import sys
 from torch.utils.data import DataLoader
 from torchvision.utils import save_image, make_grid
 from torch.autograd import Variable
-
 from model import *
 from make_dataset import ImageDataset
 
@@ -63,7 +57,7 @@ dataloader = DataLoader(
 # ----------
 EPOCHs = 300
 for epoch in range(0, EPOCHs):
-    for i, images in enumerate(dataloader):
+    for itr_id, images in enumerate(dataloader):
 
         # Configure model input
         imgs_lr = Variable(images["lr"].type(Tensor))
@@ -119,21 +113,21 @@ for epoch in range(0, EPOCHs):
         # --------------
         #  Log Progress
         # --------------
+        print(f'Epoch: {epoch}/{EPOCHs} Batch ID: {i}/{len(dataloader)} Loss_D: {loss_D.item()} Loss_G: {loss_G.item()}')
 
-        sys.stdout.write(
-            "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]\n" %
-            (epoch, EPOCHs, i, len(dataloader), loss_D.item(), loss_G.item()))
-
-        batches_done = epoch * len(dataloader) + i
-        if batches_done % 100 == 0:
+        if itr_id % (len(dataloader)-1) == 0:
+            # Saving Model
             torch.save(generator.state_dict(), 'models/generator.pt')
             torch.save(discriminator.state_dict(), 'models/discriminator.pt')
+
+            # Log state of Model
             print(f'The Model is being Saved!')
-            # Save image grid with upsampled inputs and SRGAN outputs
+
+            # Save image grid with up-sampled inputs and SRGAN outputs
             imgs_lr = nn.functional.interpolate(imgs_lr, scale_factor=4)
             gen_hr = make_grid(gen_hr, nrow=1, normalize=True)
             imgs_lr = make_grid(imgs_lr, nrow=1, normalize=True)
             img_grid = torch.cat((imgs_lr, gen_hr), -1)
             save_image(img_grid,
-                       "reports/training_results/%d.png" % batches_done,
+                       f"reports/training_results/{itr_id}.png",
                        normalize=False)
