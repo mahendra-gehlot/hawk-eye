@@ -17,7 +17,7 @@ from make_dataset import ImageDataset
 
 cuda = torch.cuda.is_available()
 
-hr_shape = (720, 720)
+hr_shape = (512, 512)
 
 # Initialize generator and discriminator
 generator = GeneratorResNet()
@@ -41,7 +41,7 @@ if cuda:
 Tensor = torch.cuda.FloatTensor if cuda else torch.Tensor
 
 dataloader = DataLoader(
-    ImageDataset("data/sub_sample/", hr_shape=hr_shape),
+    ImageDataset("data/Set5/", hr_shape=hr_shape),
     batch_size=1,
     shuffle=False,
     num_workers=2,
