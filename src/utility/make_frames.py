@@ -13,7 +13,7 @@ while (True):
 
     if ret:
         # if video is still left continue creating images
-        name = 'report/video_frames' + str(currentframe) + '.jpg'
+        name = 'report/video_frames/' + str(currentframe) + '.jpg'
         print('Creating...' + name)
 
         # writing the extracted images
