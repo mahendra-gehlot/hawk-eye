@@ -71,13 +71,14 @@ for i, images in enumerate(tqdm(dataloader)):
     generator.eval()
     # Generate a high resolution image from low resolution input
     gen_hr = generator(imgs_lr)
+    extrapolated_image_ssim = image_enlarge(imgs_lr)
     extrapolated_image = image_enlarge(inv_normalize(imgs_lr))
     actual_hr_img = inv_normalize(imgs_hr)
     gen_hr_img = inv_normalize(gen_hr)
 
     # ssim calculations
-    ssim_srgan = torch_ssim(actual_hr_img, gen_hr_img).item()
-    ssim_bi = torch_ssim(actual_hr_img, extrapolated_image).item()
+    ssim_srgan = torch_ssim(imgs_hr, gen_hr).item()
+    ssim_bi = torch_ssim(imgs_hr, extrapolated_image_ssim).item()
 
     # saving results
     extrapolated_image = make_grid(extrapolated_image, nrow=1, normalize=True)
