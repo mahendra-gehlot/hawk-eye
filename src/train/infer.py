@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 from model import *
 from custom_dataset import ImageDataset
 
-# Adding
+# argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument("input_directory", help="Directory for inference")
 parser.add_argument("input_resolution", help="Input Resolution", type=int)
@@ -24,11 +24,12 @@ cuda = torch.cuda.is_available()
 
 hr_shape = (args.input_resolution, args.input_resolution)
 
-# Initialize generator and discriminator
+# initialize generator and discriminator
 generator = GeneratorResNet()
 discriminator = Discriminator(input_shape=(3, *hr_shape))
 feature_extractor = FeatureExtractor()
 
+# set false if training from scratch
 load = True
 
 if load:
