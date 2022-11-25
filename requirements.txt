@@ -3,3 +3,4 @@ torchvision
 tqdm
 scikit-image
 pandas
+cv2
