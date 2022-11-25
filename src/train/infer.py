@@ -75,6 +75,10 @@ for i, images in enumerate(tqdm(dataloader)):
     actual_hr_img = inv_normalize(imgs_hr)
     gen_hr_img = inv_normalize(gen_hr)
 
+    # ssim calculations
+    ssim_srgan = torch_ssim(actual_hr_img, gen_hr_img).item()
+    ssim_bi = torch_ssim(actual_hr_img, extrapolated_image).item()
+
     # saving results
     extrapolated_image = make_grid(extrapolated_image, nrow=1, normalize=True)
     gen_hr_img = make_grid(gen_hr_img, nrow=1, normalize=True)
@@ -84,17 +88,13 @@ for i, images in enumerate(tqdm(dataloader)):
 
     save_image(img_grid, f"{args.output_directory}inferred_{i}.png")
 
-    # calculating PSNR and SSIM
+    # psnr calculations
     psnr_srgan = peak_signal_noise_ratio(actual_hr_img.cpu().detach().numpy(),
                                          gen_hr_img.cpu().detach().numpy())
-
-    ssim_srgan = torch_ssim(actual_hr_img, gen_hr_img)
 
     psnr_bi = peak_signal_noise_ratio(
         actual_hr_img.cpu().detach().numpy(),
         extrapolated_image.cpu().detach().numpy())
-
-    ssim_bi = torch_ssim(actual_hr_img, extrapolated_image)
 
     # collecting scores
     scores = [i, psnr_srgan, psnr_bi, ssim_srgan, ssim_bi]
