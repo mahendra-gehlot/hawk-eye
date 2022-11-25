@@ -4,8 +4,8 @@ import pandas as pd
 import argparse
 from PIL import Image
 from tqdm import tqdm
+from ssim import torch_ssim
 from skimage.metrics import peak_signal_noise_ratio
-from skimage.metrics import structural_similarity
 from torch.utils.data import DataLoader
 from torchvision.utils import save_image, make_grid
 from torch.autograd import Variable
@@ -87,27 +87,20 @@ for i, images in enumerate(tqdm(dataloader)):
     # calculating PSNR and SSIM
     psnr_srgan = peak_signal_noise_ratio(actual_hr_img.cpu().detach().numpy(),
                                          gen_hr_img.cpu().detach().numpy())
-    # ssim_srgan = structural_similarity(
-    #     actual_hr_img.cpu().detach().numpy().squeeze(),
-    #     gen_hr_img.cpu().detach().numpy().squeeze(),
-    #     channel_axis=3,
-    #     multichannel=True)
+
+    ssim_srgan = torch_ssim(actual_hr_img, gen_hr_img)
 
     psnr_bi = peak_signal_noise_ratio(
         actual_hr_img.cpu().detach().numpy(),
         extrapolated_image.cpu().detach().numpy())
 
-    # ssim_bi = structural_similarity(
-    #     actual_hr_img.cpu().detach().numpy().squeeze(),
-    #     extrapolated_image.cpu().detach().numpy().squeeze(),
-    #     channel_axis=3,
-    #     multichannel=True)
+    ssim_bi = torch_ssim(actual_hr_img, extrapolated_image)
 
     # collecting scores
-    scores = [i, psnr_srgan, psnr_bi, 0, 0]
+    scores = [i, psnr_srgan, psnr_bi, ssim_srgan, ssim_bi]
     metrics.append(scores)
 
-# writting results
+# writing results
 scores_df = pd.DataFrame(data=metrics,
                          columns=[
                              'IMG_ID', 'PSNR_SRGAN', 'PSNR_BICUBIC',
