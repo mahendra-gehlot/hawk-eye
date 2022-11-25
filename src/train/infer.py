@@ -88,7 +88,14 @@ for i, images in enumerate(tqdm(dataloader)):
 
     img_grid = torch.cat((extrapolated_image, gen_hr_img, actual_hr_img), -1)
 
-    save_image(img_grid, f"{args.output_directory}inferred_{i}.png")
+    int_length = len(str(i))
+    zeros_count = 5 - int_length
+
+    infer_only = True
+    if infer_only:
+        save_image(img_grid, f"{args.output_directory}inferred_{'0'*zeros_count}{i}.png")
+    else:
+        save_image(gen_hr_img, f"{args.output_directory}inferred_{'0'*zeros_count}{i}.png")
 
     # psnr calculations
     psnr_srgan = peak_signal_noise_ratio(actual_hr_img.cpu().detach().numpy(),

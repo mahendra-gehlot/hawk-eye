@@ -16,7 +16,7 @@ while (True):
         ll = len(str(currentframe))
         zeros = 5 - ll
 
-        name = 'data/video_frames/' + ('0'*zeros) +str(currentframe) + '.jpg'
+        name = 'data/video_frames/' + ('0'*zeros) + str(currentframe) + '.jpg'
         print('Creating...' + name)
 
         # writing the extracted images
