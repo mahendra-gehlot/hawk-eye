@@ -10,7 +10,7 @@ for filename in all_files:
     size = (width, height)
     img_array.append(img)
 fps = 30
-out = cv2.VideoWriter('reports/sr_videos.mp4', cv2.VideoWriter_fourcc(*'mpeg'),
+out = cv2.VideoWriter('reports/sr_videos.mp4', cv2.VideoWriter_fourcc(*'mp4v'),
                       fps, size)
 
 for i in range(len(img_array)):
