@@ -77,7 +77,7 @@ for i, images in enumerate(tqdm(dataloader)):
     gen_hr_img = inv_normalize(gen_hr)
 
     # ssim calculations
-    ssim_srgan = torch_ssim(imgs_hr, gen_hr).item()
+    ssim_srgan = torch_ssim(actual_hr_img, gen_hr_img).item()
     ssim_bi = torch_ssim(imgs_hr, extrapolated_image_ssim).item()
 
     # saving results
