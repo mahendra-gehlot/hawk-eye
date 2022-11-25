@@ -62,3 +62,12 @@ optional arguments:
 ```
 python3 src/train/infer.py 'data/Set5/' 520 'reports/infer_result/'
 ```
+ICAIML project (DS 226)
+Aug-Dec 2022
+
+Team members:
+1. Mahendra Gehlot
+2. Shashank Kumar
+3. Vedant Gupta
+4. Sayan Chaudhuri
+5. Abhishek Karan
