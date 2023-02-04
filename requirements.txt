@@ -3,4 +3,4 @@ torchvision
 tqdm
 scikit-image
 pandas
-opencv
+opencv-python
